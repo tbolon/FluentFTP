@@ -25,19 +25,19 @@ namespace FluentFTP
 
 			var remote = args[4];
 
+			Helpers.FtpTrace.EnableTracing = true;
+			Helpers.FtpTrace.LogFunctions = true;
 			Helpers.FtpTrace.LogToConsole = true;
 
 			using (var client = new FtpClient(host, username, password))
 			{
+				client.OnLogEvent = (x, m) => Console.WriteLine($"[{x}] {m}");
 				client.EncryptionMode = FtpEncryptionMode.Explicit;
 				client.ValidateAnyCertificate = true;
 				client.SslProtocols = System.Security.Authentication.SslProtocols.Tls13;
 				client.Connect();
 
-
-
 				var status = client.UploadFile(local, remote, FtpRemoteExists.NoCheck);
-
 
 				if (status != FtpStatus.Success)
 				{
